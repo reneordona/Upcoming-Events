@@ -184,48 +184,52 @@
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
-    background: #fff;
-    border: 0.15vmin solid var(--rule);
-    border-left: 0.5vmin solid var(--col);
-    box-shadow: 0 0.3vmin 1vmin rgba(26,37,48,0.05);
+    background: var(--col);
+    border: none;
+    box-shadow: 0 0.3vmin 1.2vmin rgba(26,37,48,0.15);
+    position: relative;
+    overflow: hidden;
   }
-  .day-header.today {
-    background: var(--cyan-soft);
-    border-color: var(--cyan);
-    border-left-color: var(--cyan);
-  }
-  .day-header.past-header {
-    border-left-color: var(--ink-muted);
+  .day-header::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+    pointer-events: none;
   }
 
   .day-name {
     font-family: 'Fraunces', serif;
     font-size: 2vmin;
     font-weight: 700;
-    color: var(--ink);
+    color: #fff;
     letter-spacing: -0.01em;
     line-height: 1;
+    position: relative; z-index: 1;
+    text-shadow: 0 0.1vmin 0.4vmin rgba(0,0,0,0.2);
   }
-  .day-header.today .day-name { color: var(--cyan-dark); }
 
   .day-badge {
     font-size: 1.1vmin;
-    font-weight: 600;
-    color: var(--ink-muted);
+    font-weight: 700;
+    background: rgba(0,0,0,0.18);
+    color: #fff;
+    border-radius: 0.5vmin;
+    padding: 0.25vmin 0.7vmin;
     letter-spacing: 0.05em;
+    position: relative; z-index: 1;
   }
-  .day-header.today .day-badge { color: var(--cyan-dark); }
 
   .today-tag {
     font-size: 1vmin;
     font-weight: 700;
-    background: var(--cyan);
-    color: #fff;
+    background: #fff;
+    color: var(--col);
     border-radius: 10vmin;
     padding: 0.3vmin 0.9vmin;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    margin-left: 1vmin;
+    margin-left: 0.8vmin;
+    position: relative; z-index: 1;
   }
 
   /* ── EVENT CARDS ── */
@@ -360,8 +364,8 @@
       </div>
       <div class="header-divider"></div>
       <div class="header-meta">
-        <div class="header-eyebrow">What's Happening</div>
-        <div class="header-title">This <em>Week</em>.</div>
+        <div class="header-eyebrow">Housing Authority of the City of Long Beach</div>
+        <div class="header-title">Upcoming <em>This Week</em></div>
       </div>
     </div>
     <div class="header-right">
@@ -378,7 +382,7 @@
       </div>
       <div class="footer-label">Weekly Events</div>
     </div>
-    <div class="footer-right"></div>
+    <div class="footer-right">haclb.org</div>
   </footer>
 
 </div>
