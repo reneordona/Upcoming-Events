@@ -125,15 +125,7 @@
     color: rgba(255,255,255,0.5);
     letter-spacing: 0.02em;
   }
-  .today-label {
-    font-size: 0.8vw;
-    font-weight: 700;
-    color: var(--cyan);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-top: 0.4vh;
-   display:hidden;
-  }
+
 
   /* ── GRID ── */
   .grid {
@@ -329,7 +321,6 @@
     </div>
     <div class="header-right">
       <div class="week-range" id="week-range"></div>
-      <div class="today-label" id="today-label"></div>
     </div>
   </div>
 
@@ -407,8 +398,6 @@ function eventDayIndex(ev, dates) {
 function build(events) {
   const dates = weekDates();
   document.getElementById('week-range').textContent = fmtRange(dates);
-  const ti = dates.findIndex(isToday);
-  if (ti >= 0) document.getElementById('today-label').textContent = 'Today — ' + DAY_FULL[ti];
 
   // Filter to this week only
   const weekEvents = events.filter(e => eventInWeek(e, dates));
