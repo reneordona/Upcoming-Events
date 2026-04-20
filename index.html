@@ -21,7 +21,6 @@
     --ink-muted:   #7a8695;
     --rule:        #e4e2db;
 
-    /* Day column accent colors — ink-toned for light theme */
     --col1: #05c3de;
     --col2: #e07b2a;
     --col3: #8b5cf6;
@@ -40,7 +39,6 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ── STAGE ── */
   .stage {
     position: relative;
     width: 100vw; height: 100vh;
@@ -50,7 +48,6 @@
     flex-direction: column;
   }
 
-  /* Warm paper wash */
   .stage::before {
     content: '';
     position: absolute; inset: 0;
@@ -61,7 +58,6 @@
     z-index: 0;
   }
 
-  /* Noise texture */
   .stage::after {
     content: '';
     position: absolute; inset: 0;
@@ -93,7 +89,6 @@
   .logo-wrap img {
     height: 7.5vh;
     width: auto;
-    /* Logo is white — recolor to ink for light bg */
   }
 
   .header-divider {
@@ -156,7 +151,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 1.2vmin;
+    gap: 1.5vmin;
     opacity: 0;
     transform: translateY(2vmin);
     animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
@@ -171,13 +166,12 @@
     to { opacity:1; transform:translateY(0); }
   }
 
-  /* Past days */
   .day-col.past { opacity: 0.35 !important; filter: saturate(0.2) grayscale(0.4); }
 
   /* ── DAY HEADER ── */
   .day-header {
     border-radius: 1vmin;
-    padding: 1.2vmin 1.5vmin;
+    padding: 1.4vmin 1.8vmin;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -197,7 +191,7 @@
 
   .day-name {
     font-family: 'Fraunces', serif;
-    font-size: 2vmin;
+    font-size: 2.4vmin;
     font-weight: 700;
     color: #fff;
     letter-spacing: -0.01em;
@@ -207,18 +201,18 @@
   }
 
   .day-badge {
-    font-size: 1.1vmin;
+    font-size: 1.3vmin;
     font-weight: 700;
     background: rgba(0,0,0,0.18);
     color: #fff;
     border-radius: 0.5vmin;
-    padding: 0.25vmin 0.7vmin;
+    padding: 0.3vmin 0.8vmin;
     letter-spacing: 0.05em;
     position: relative; z-index: 1;
   }
 
   .today-tag {
-    font-size: 1vmin;
+    font-size: 1.1vmin;
     font-weight: 700;
     background: #fff;
     color: var(--col);
@@ -231,17 +225,18 @@
   }
 
   /* ── EVENT CARDS ── */
+  /* Each card is a flex column with time pinned top, title centered, location pinned bottom */
   .event-card {
     flex: 1; min-height: 0;
     background: #fff;
     border: 0.15vmin solid var(--rule);
-    border-left: 0.5vmin solid var(--col);
+    border-left: 0.6vmin solid var(--col);
     border-radius: 1vmin;
-    padding: 1.2vmin 1.5vmin;
+    padding: 1.8vmin 2vmin;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    box-shadow: 0 0.3vmin 1vmin rgba(26,37,48,0.04);
+    justify-content: space-between;
+    box-shadow: 0 0.3vmin 1vmin rgba(26,37,48,0.05);
     position: relative;
     overflow: hidden;
   }
@@ -250,38 +245,44 @@
     display: flex;
     align-items: center;
     gap: 0.5vmin;
-    font-size: 1.1vmin;
+    font-size: 1.4vmin;
     font-weight: 700;
     color: var(--col);
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     line-height: 1;
-    margin-bottom: 0.5vmin;
   }
-  .event-time .ti { font-size: 1.3vmin; }
+  .event-time .ti { font-size: 1.5vmin; }
+
+  /* Time placeholder keeps layout stable when no time given */
+  .event-time-spacer { height: 1.4vmin; }
 
   .event-title {
     font-family: 'Fraunces', serif;
-    font-size: 1.9vmin;
+    font-size: 2.4vmin;
     font-weight: 600;
     color: var(--ink);
     line-height: 1.2;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
+    /* vertically centered by space-between + spacers */
   }
 
   .event-loc {
     display: flex;
     align-items: center;
     gap: 0.4vmin;
-    font-size: 1.1vmin;
+    font-size: 1.4vmin;
     font-weight: 500;
     color: var(--ink-muted);
-    margin-top: 0.5vmin;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1;
   }
-  .event-loc .ti { font-size: 1.2vmin; flex-shrink: 0; }
+  .event-loc .ti { font-size: 1.5vmin; flex-shrink: 0; }
+
+  /* Location placeholder keeps layout stable when no location given */
+  .event-loc-spacer { height: 1.4vmin; }
 
   /* Empty & no-events */
   .empty-slot {
@@ -296,13 +297,13 @@
     border: 0.15vmin dashed var(--rule);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    gap: 0.8vmin;
+    gap: 1vmin;
     color: var(--ink-muted);
     opacity: 0.5;
   }
-  .no-events .ti { font-size: 2.5vmin; }
+  .no-events .ti { font-size: 3vmin; }
   .no-events-lbl {
-    font-size: 1vmin;
+    font-size: 1.3vmin;
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -324,11 +325,9 @@
     align-items: center;
     gap: 1.2vmin;
   }
-  .color-dots {
-    display: flex; gap: 0.5vmin;
-  }
+  .color-dots { display: flex; gap: 0.5vmin; }
   .color-dots span {
-    width: 0.8vmin; height: 0.8vmin;
+    width: 0.9vmin; height: 0.9vmin;
     border-radius: 50%;
   }
   .color-dots span:nth-child(1) { background: var(--col1); }
@@ -395,6 +394,7 @@ const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQkD9PZzgBrNW
 
 const DAY_ABB  = ["Mon","Tue","Wed","Thu","Fri"];
 const DAY_FULL = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+const MAX_EVENTS = 3;
 
 function weekDates() {
   const now = new Date(), d = now.getDay();
@@ -441,15 +441,16 @@ function build(events) {
   grid.innerHTML = '';
 
   dates.forEach((date, i) => {
-    const evs = weekEvents.filter(e => eventDayIndex(e, dates) === i).slice(0, 5);
+    const evs = weekEvents.filter(e => eventDayIndex(e, dates) === i).slice(0, MAX_EVENTS);
     const past = isPast(date);
     const today = isToday(date);
 
     const col = document.createElement('div');
     col.className = 'day-col' + (past ? ' past' : '');
 
+    // Day header
     const hdr = document.createElement('div');
-    hdr.className = 'day-header' + (today ? ' today' : '') + (past ? ' past-header' : '');
+    hdr.className = 'day-header' + (past ? ' past-header' : '');
     hdr.innerHTML = `
       <div class="day-name">${DAY_ABB[i]}</div>
       <div style="display:flex;align-items:center;">
@@ -467,13 +468,19 @@ function build(events) {
       evs.forEach(ev => {
         const c = document.createElement('div');
         c.className = 'event-card';
+        // Time top, title middle, location bottom — spacers maintain layout when fields are empty
         c.innerHTML = `
-          ${ev.time ? `<div class="event-time"><i class="ti ti-clock"></i>${ev.time}</div>` : ''}
+          ${ev.time
+            ? `<div class="event-time"><i class="ti ti-clock"></i>${ev.time}</div>`
+            : `<div class="event-time-spacer"></div>`}
           <div class="event-title">${ev.title}</div>
-          ${ev.location ? `<div class="event-loc"><i class="ti ti-map-pin"></i>${ev.location}</div>` : ''}`;
+          ${ev.location
+            ? `<div class="event-loc"><i class="ti ti-map-pin"></i>${ev.location}</div>`
+            : `<div class="event-loc-spacer"></div>`}`;
         col.appendChild(c);
       });
-      for (let j = evs.length; j < 5; j++) {
+      // Fill remaining slots
+      for (let j = evs.length; j < MAX_EVENTS; j++) {
         const s = document.createElement('div'); s.className = 'empty-slot'; col.appendChild(s);
       }
     }
