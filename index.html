@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upcoming This Week</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --cyan:   #05c3de;
+    --navy:   #236092;
+    --white:  #ffffff;
+    --col1:   #05c3de;   /* Mon — brand cyan */
+    --col2:   #f97316;   /* Tue — energetic orange */
+    --col3:   #a855f7;   /* Wed — vivid violet */
+    --col4:   #10b981;   /* Thu — teal green */
+    --col5:   #f43f5e;   /* Fri — coral red */
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--white);
+  }
+
+  /* ── BACKGROUND ── */
+  .bg {
+    position: fixed; inset: 0;
+    background: #06111f;
+    overflow: hidden;
+    z-index: 0;
+  }
+  .bg-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(12vw);
+    opacity: 0.22;
+    animation: bob 14s ease-in-out infinite alternate;
+  }
+  .bg-blob-1 { width:60vw; height:60vw; background:var(--cyan);  top:-20vw; right:-15vw; animation-delay:0s; }
+  .bg-blob-2 { width:35vw; height:35vw; background:#f97316; bottom:-10vw; left:5vw;  animation-delay:-5s; }
+  .bg-blob-3 { width:30vw; height:30vw; background:#a855f7; top:20%;   left:35%;  animation-delay:-9s; }
+
+  @keyframes bob {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(2vw,2vh) scale(1.08); }
+  }
+
+  .bg-noise {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+  }
+
+  /* ── SLIDE ── */
+  .slide {
+    position: relative; z-index: 1;
+    width: 100vw; height: 100vh;
+    display: flex; flex-direction: column;
+    padding: 2vh 2.8vw 1.6vh;
+    gap: 1.5vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 2vw;
+    flex-shrink: 0;
+    padding-bottom: 1.5vh;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .logo-wrap img {
+    height: 8vh;
+    width: auto;
+    
+    opacity: 0.95;
+  }
+
+  .vline {
+    width: 1px; height: 6.5vh;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.3), transparent);
+    flex-shrink: 0;
+  }
+
+  .header-center { flex: 1; }
+
+  .header-eyebrow {
+    font-size: 0.85vw;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 0.3vh;
+  }
+
+  .header-title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 4vw;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--white);
+  }
+  .header-title em {
+    font-style: normal;
+    background: linear-gradient(90deg, var(--cyan), #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-right {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .week-range {
+    font-size: 1vw;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.02em;
+  }
+  .today-label {
+    font-size: 0.8vw;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 0.4vh;
+  }
+
+  /* ── GRID ── */
+  .grid {
+    display: flex;
+    flex: 1;
+    gap: 1vw;
+    min-height: 0;
+  }
+
+  .day-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6vh;
+    opacity: 0;
+    transform: translateY(2.5vh);
+    animation: rise 0.55s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+  .day-col:nth-child(1){ animation-delay:.06s; --col:var(--col1); }
+  .day-col:nth-child(2){ animation-delay:.13s; --col:var(--col2); }
+  .day-col:nth-child(3){ animation-delay:.20s; --col:var(--col3); }
+  .day-col:nth-child(4){ animation-delay:.27s; --col:var(--col4); }
+  .day-col:nth-child(5){ animation-delay:.34s; --col:var(--col5); }
+
+  @keyframes rise {
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  /* Day header pill */
+  .day-header {
+    border-radius: 0.9vw;
+    padding: 0.8vh 0.9vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    background: var(--col);
+    position: relative;
+    overflow: hidden;
+  }
+  .day-header::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 55%);
+  }
+  .day-header.today {
+    box-shadow: 0 0 2vw rgba(255,255,255,0.25), 0 0 0.5vw var(--col);
+  }
+
+  .day-name {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.5vw;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #fff;
+    position: relative; z-index: 1;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  .day-badge {
+    font-size: 0.78vw;
+    font-weight: 800;
+    background: rgba(0,0,0,0.25);
+    color: #fff;
+    border-radius: 0.4vw;
+    padding: 0.2vh 0.5vw;
+    letter-spacing: 0.05em;
+    position: relative; z-index: 1;
+    white-space: nowrap;
+  }
+
+  .today-tag {
+    font-size: 0.65vw;
+    font-weight: 800;
+    background: rgba(255,255,255,0.9);
+    color: #06111f;
+    border-radius: 0.3vw;
+    padding: 0.15vh 0.45vw;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    position: relative; z-index: 1;
+    margin-left: 0.4vw;
+  }
+
+  /* Event cards */
+  .event-card {
+    flex: 1; min-height: 0;
+    border-radius: 0.7vw;
+    padding: 0.6vh 0.8vw;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .event-card::before {
+    content:'';
+    position:absolute; top:0; left:0;
+    width: 0.3vw; height:100%;
+    background: var(--col);
+    border-radius: 0.7vw 0 0 0.7vw;
+  }
+  .event-card-inner { padding-left: 0.5vw; }
+
+  .event-time {
+    display: flex;
+    align-items: center;
+    gap: 0.3vw;
+    font-size: 0.72vw;
+    font-weight: 800;
+    color: var(--col);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 0.2vh;
+  }
+  .event-time .ti { font-size: 0.85vw; }
+
+  .event-title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.1vw;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .event-loc {
+    display: flex;
+    align-items: center;
+    gap: 0.3vw;
+    font-size: 0.7vw;
+    font-weight: 600;
+    color: rgba(255,255,255,0.45);
+    margin-top: 0.2vh;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .event-loc .ti { font-size: 0.8vw; flex-shrink: 0; }
+
+  /* Empty & no-events */
+  .empty-slot {
+    flex: 1; min-height: 0;
+    border-radius: 0.7vw;
+    border: 1px dashed rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.015);
+  }
+  .no-events {
+    flex: 1; min-height: 0;
+    border-radius: 0.7vw;
+    border: 1px dashed rgba(255,255,255,0.1);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0.5vh;
+    color: rgba(255,255,255,0.2);
+  }
+  .no-events .ti { font-size: 2vw; }
+  .no-events-lbl {
+    font-size: 0.72vw;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* Past days */
+  .day-col.past { opacity: 0.38; filter: saturate(0.3); }
+  .past-header { background: rgba(255,255,255,0.1) !important; box-shadow: none !important; }
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+  <div class="bg-noise"></div>
+</div>
+
+<div class="slide">
+
+  <div class="header">
+    <div class="logo-wrap">
+      <img id="logo" alt="HACLB Logo" />
+    </div>
+    <div class="vline"></div>
+    <div class="header-center">
+      <div class="header-eyebrow">What's happening</div>
+      <div class="header-title">THIS <em>WEEK</em>.</div>
+    </div>
+    <div class="header-right">
+      <div class="week-range" id="week-range"></div>
+      <div class="today-label" id="today-label"></div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+</div>
+
+<script>
+// ============================================================
+//  📋  GOOGLE SHEET CSV URL
+//  Only change this if you move your sheet.
+// ============================================================
+const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQkD9PZzgBrNWD1n8Z3Cc1gm_OpwTk0QZZ-YcI_u94pFHmIqd3apMj3TSsBdf7i8wAvjjDBq_iukH1l/pub?output=csv';
+// ============================================================
+
+const DAYS     = ["monday","tuesday","wednesday","thursday","friday"];
+const DAY_ABB  = ["Mon","Tue","Wed","Thu","Fri"];
+const DAY_FULL = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+
+function weekDates() {
+  const now = new Date(), d = now.getDay();
+  const diff = d===0 ? 1 : d===6 ? 2 : -(d-1);
+  const mon = new Date(now); mon.setDate(now.getDate()+diff);
+  return DAYS.map((_,i)=>{ const x=new Date(mon); x.setDate(mon.getDate()+i); return x; });
+}
+function fmt(d){ return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function fmtRange(ds){ return `${ds[0].toLocaleDateString('en-US',{month:'long',day:'numeric'})} – ${ds[4].toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`; }
+function isToday(d){ const t=new Date(); return d.getDate()===t.getDate()&&d.getMonth()===t.getMonth()&&d.getFullYear()===t.getFullYear(); }
+function isPast(d){ const t=new Date(); t.setHours(0,0,0,0); const x=new Date(d); x.setHours(0,0,0,0); return x<t; }
+
+// Parse CSV text into array of event objects
+// Expected columns: date, time, title, location
+function parseCSV(text) {
+  const lines = text.trim().split('\n').slice(1); // skip header row
+  return lines.map(line => {
+    // Handle quoted fields with commas inside them
+    const cols = [];
+    let cur = '', inQuote = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQuote = !inQuote; }
+      else if (ch === ',' && !inQuote) { cols.push(cur.trim()); cur = ''; }
+      else { cur += ch; }
+    }
+    cols.push(cur.trim());
+    return {
+      date:     cols[0] || '',
+      time:     cols[1] || '',
+      title:    cols[2] || '',
+      location: cols[3] || ''
+    };
+  }).filter(e => e.date && e.title);
+}
+
+// Check if an event's date falls within the given week dates
+function eventInWeek(ev, dates) {
+  const evDate = new Date(ev.date + 'T00:00:00');
+  return dates.some(d =>
+    d.getFullYear() === evDate.getFullYear() &&
+    d.getMonth()    === evDate.getMonth()    &&
+    d.getDate()     === evDate.getDate()
+  );
+}
+
+// Get which day index (0–4) an event belongs to
+function eventDayIndex(ev, dates) {
+  const evDate = new Date(ev.date + 'T00:00:00');
+  return dates.findIndex(d =>
+    d.getFullYear() === evDate.getFullYear() &&
+    d.getMonth()    === evDate.getMonth()    &&
+    d.getDate()     === evDate.getDate()
+  );
+}
+
+function build(events) {
+  const dates = weekDates();
+  document.getElementById('week-range').textContent = fmtRange(dates);
+  const ti = dates.findIndex(isToday);
+  if (ti >= 0) document.getElementById('today-label').textContent = 'Today — ' + DAY_FULL[ti];
+
+  // Filter to this week only
+  const weekEvents = events.filter(e => eventInWeek(e, dates));
+
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  dates.forEach((date, i) => {
+    const evs = weekEvents
+      .filter(e => eventDayIndex(e, dates) === i)
+      .slice(0, 5);
+
+    const col = document.createElement('div');
+    const past = isPast(date);
+    col.className = 'day-col' + (past ? ' past' : '');
+
+    const hdr = document.createElement('div');
+    const today = isToday(date);
+    hdr.className = 'day-header' + (today ? ' today' : '') + (past ? ' past-header' : '');
+    hdr.innerHTML = `
+      <div class="day-name">${DAY_ABB[i]}</div>
+      <div style="display:flex;align-items:center;">
+        <div class="day-badge">${fmt(date)}</div>
+        ${today ? '<div class="today-tag">Today</div>' : ''}
+      </div>`;
+    col.appendChild(hdr);
+
+    if (evs.length === 0) {
+      const n = document.createElement('div');
+      n.className = 'no-events';
+      n.innerHTML = `<i class="ti ti-calendar-off"></i><div class="no-events-lbl">No Events</div>`;
+      col.appendChild(n);
+    } else {
+      evs.forEach(ev => {
+        const c = document.createElement('div');
+        c.className = 'event-card';
+        c.innerHTML = `<div class="event-card-inner">
+          ${ev.time    ? `<div class="event-time"><i class="ti ti-clock"></i>${ev.time}</div>` : ''}
+          <div class="event-title">${ev.title}</div>
+          ${ev.location ? `<div class="event-loc"><i class="ti ti-map-pin"></i>${ev.location}</div>` : ''}
+        </div>`;
+        col.appendChild(c);
+      });
+      for (let j = evs.length; j < 5; j++) {
+        const s = document.createElement('div'); s.className = 'empty-slot'; col.appendChild(s);
+      }
+    }
+    grid.appendChild(col);
+  });
+}
+
+function showError(msg) {
+  document.getElementById('grid').innerHTML =
+    `<div style="width:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-size:1.2vw;letter-spacing:0.1em;">${msg}</div>`;
+}
+
+// Fetch sheet and build
+fetch(SHEET_CSV)
+  .then(r => { if (!r.ok) throw new Error('Sheet fetch failed'); return r.text(); })
+  .then(text => build(parseCSV(text)))
+  .catch(() => showError('Could not load events — check sheet URL'));
+</script>
+
+<script>
+document.getElementById('logo').src = 'https://raw.githubusercontent.com/reneordona/ha_elevator/main/Housing%20Authority%20Logo%20-%20Portrait%20Version-300dpi%20for%20Print-WHITE.png';
+</script>
+</body>
+</html>
