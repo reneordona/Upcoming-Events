@@ -127,7 +127,6 @@
   .header-right {
     display: flex;
     align-items: center;
-    gap: 1.5vmin;
   }
   .week-range {
     font-size: 1.3vmin;
@@ -225,7 +224,6 @@
   }
 
   /* ── EVENT CARDS ── */
-  /* Each card is a flex column with time pinned top, title centered, location pinned bottom */
   .event-card {
     flex: 1; min-height: 0;
     background: #fff;
@@ -253,8 +251,6 @@
     line-height: 1;
   }
   .event-time .ti { font-size: 1.5vmin; }
-
-  /* Time placeholder keeps layout stable when no time given */
   .event-time-spacer { height: 1.4vmin; }
 
   .event-title {
@@ -264,7 +260,6 @@
     color: var(--ink);
     line-height: 1.2;
     letter-spacing: -0.02em;
-    /* vertically centered by space-between + spacers */
   }
 
   .event-loc {
@@ -280,8 +275,6 @@
     line-height: 1;
   }
   .event-loc .ti { font-size: 1.5vmin; flex-shrink: 0; }
-
-  /* Location placeholder keeps layout stable when no location given */
   .event-loc-spacer { height: 1.4vmin; }
 
   /* Empty & no-events */
@@ -307,6 +300,50 @@
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
+  }
+
+  /* ── HOLIDAY BLOCK — Style A ── */
+  .holiday-block {
+    flex: 1; min-height: 0;
+    border-radius: 1vmin;
+    background: var(--cyan);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2vmin;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0.4vmin 2vmin rgba(5,195,222,0.4);
+  }
+  .holiday-block::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .holiday-block .h-icon {
+    font-size: 3.5vmin;
+    color: rgba(255,255,255,0.75);
+    position: relative; z-index: 1;
+  }
+  .holiday-block .h-name {
+    font-family: 'Fraunces', serif;
+    font-size: 2.6vmin;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    line-height: 1.15;
+    position: relative; z-index: 1;
+    padding: 0 1.5vmin;
+  }
+  .holiday-block .h-closed {
+    font-size: 1.3vmin;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.8);
+    position: relative; z-index: 1;
   }
 
   /* ── FOOTER ── */
@@ -395,6 +432,7 @@ const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQkD9PZzgBrNW
 const DAY_ABB  = ["Mon","Tue","Wed","Thu","Fri"];
 const DAY_FULL = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
 const MAX_EVENTS = 3;
+const HOLIDAY_PREFIX = 'HOLIDAY:';
 
 function weekDates() {
   const now = new Date(), d = now.getDay();
@@ -432,6 +470,15 @@ function eventDayIndex(ev, dates) {
   );
 }
 
+// Returns holiday name string if event is a holiday, otherwise null
+function getHolidayName(ev) {
+  const t = ev.title.trim();
+  if (t.toUpperCase().startsWith(HOLIDAY_PREFIX)) {
+    return t.slice(HOLIDAY_PREFIX.length).trim();
+  }
+  return null;
+}
+
 function build(events) {
   const dates = weekDates();
   document.getElementById('week-range').textContent = fmtRange(dates);
@@ -441,16 +488,20 @@ function build(events) {
   grid.innerHTML = '';
 
   dates.forEach((date, i) => {
-    const evs = weekEvents.filter(e => eventDayIndex(e, dates) === i).slice(0, MAX_EVENTS);
-    const past = isPast(date);
-    const today = isToday(date);
+    const dayEvs = weekEvents.filter(e => eventDayIndex(e, dates) === i);
+    const past    = isPast(date);
+    const today   = isToday(date);
+
+    // Check if any event on this day is a holiday
+    const holidayEv = dayEvs.find(e => getHolidayName(e) !== null);
+    const holidayName = holidayEv ? getHolidayName(holidayEv) : null;
 
     const col = document.createElement('div');
     col.className = 'day-col' + (past ? ' past' : '');
 
     // Day header
     const hdr = document.createElement('div');
-    hdr.className = 'day-header' + (past ? ' past-header' : '');
+    hdr.className = 'day-header';
     hdr.innerHTML = `
       <div class="day-name">${DAY_ABB[i]}</div>
       <div style="display:flex;align-items:center;">
@@ -459,31 +510,47 @@ function build(events) {
       </div>`;
     col.appendChild(hdr);
 
-    if (evs.length === 0) {
-      const n = document.createElement('div');
-      n.className = 'no-events';
-      n.innerHTML = `<i class="ti ti-calendar-off"></i><div class="no-events-lbl">No Events</div>`;
-      col.appendChild(n);
+    if (holidayName) {
+      // ── Holiday block fills entire column ──
+      const block = document.createElement('div');
+      block.className = 'holiday-block';
+      block.innerHTML = `
+        <i class="ti ti-building-community h-icon"></i>
+        <div class="h-name">${holidayName}</div>
+        <div class="h-closed">Office Closed</div>`;
+      col.appendChild(block);
+
     } else {
-      evs.forEach(ev => {
-        const c = document.createElement('div');
-        c.className = 'event-card';
-        // Time top, title middle, location bottom — spacers maintain layout when fields are empty
-        c.innerHTML = `
-          ${ev.time
-            ? `<div class="event-time"><i class="ti ti-clock"></i>${ev.time}</div>`
-            : `<div class="event-time-spacer"></div>`}
-          <div class="event-title">${ev.title}</div>
-          ${ev.location
-            ? `<div class="event-loc"><i class="ti ti-map-pin"></i>${ev.location}</div>`
-            : `<div class="event-loc-spacer"></div>`}`;
-        col.appendChild(c);
-      });
-      // Fill remaining slots
-      for (let j = evs.length; j < MAX_EVENTS; j++) {
-        const s = document.createElement('div'); s.className = 'empty-slot'; col.appendChild(s);
+      // ── Normal events ──
+      const evs = dayEvs.slice(0, MAX_EVENTS);
+
+      if (evs.length === 0) {
+        const n = document.createElement('div');
+        n.className = 'no-events';
+        n.innerHTML = `<i class="ti ti-calendar-off"></i><div class="no-events-lbl">No Events</div>`;
+        col.appendChild(n);
+      } else {
+        evs.forEach(ev => {
+          const c = document.createElement('div');
+          c.className = 'event-card';
+          c.innerHTML = `
+            ${ev.time
+              ? `<div class="event-time"><i class="ti ti-clock"></i>${ev.time}</div>`
+              : `<div class="event-time-spacer"></div>`}
+            <div class="event-title">${ev.title}</div>
+            ${ev.location
+              ? `<div class="event-loc"><i class="ti ti-map-pin"></i>${ev.location}</div>`
+              : `<div class="event-loc-spacer"></div>`}`;
+          col.appendChild(c);
+        });
+        for (let j = evs.length; j < MAX_EVENTS; j++) {
+          const s = document.createElement('div');
+          s.className = 'empty-slot';
+          col.appendChild(s);
+        }
       }
     }
+
     grid.appendChild(col);
   });
 }
